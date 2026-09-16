@@ -1,0 +1,27 @@
+## Build
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+[Ll]og/
+[Ll]ogs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Visual Studio / Rider / VS Code
+.vs/
+.idea/
+.vscode/
+*.swp
+
+## Banco / EF
+*.mdf
+*.ldf
+*.ndf
+
+## Diversos
+*.cache
+*.dll.config
+TestResults/
