@@ -1,99 +1,110 @@
-# Locadora de Veículos - Trabalho Prático 1
+# Locadora de Veículos - Trabalho Prático
 
 Sistema de aluguel de veículos desenvolvido em C# com ASP.NET Core, Entity Framework Core e SQL Server Express.
 
-**Aluno:** Davi Oliveira Parma
-**Código de pessoa:** 1597232
-**Curso:** Análise e Desenvolvimento de Software
-**Etapa entregue:** Etapa 1 - Modelagem do Banco de Dados
+**Aluno:** Davi Oliveira Parma  
+**Código de pessoa:** 1597232  
+**Curso:** Análise e Desenvolvimento de Software  
+**Etapa atual:** Etapa 2 - Implementação do Backend
 
 ---
 
-## O que tem nesta entrega
+## Entrega da Etapa 2
 
-A Etapa 1 cobre a modelagem conceitual, a implementação das classes de entidade na camada Model e a configuração do `ApplicationContext` para o mapeamento no SQL Server via Entity Framework Core.
+A API agora possui CRUD completo para Fabricantes, Categorias, Filiais, Veículos, Clientes e Aluguéis.
 
-```
-LocadoraVeiculos.sln
-├── src/LocadoraVeiculos/
-│   ├── Models/
-│   │   ├── Fabricante.cs
-│   │   ├── Categoria.cs
-│   │   ├── Filial.cs
-│   │   ├── Veiculo.cs
-│   │   ├── Cliente.cs
-│   │   ├── Aluguel.cs
-│   │   └── Enums/          StatusVeiculo, TipoCombustivel, StatusAluguel
-│   ├── Data/
-│   │   └── ApplicationContext.cs
-│   ├── Program.cs
-│   └── appsettings.json
-└── docs/
-    ├── modelo-conceitual.md    diagrama ER e justificativa das entidades
-    └── modelo-fisico.sql       script equivalente ao gerado pelo EF
-```
+Também foram adicionados:
 
-## Entidades
+- DTOs de entrada e saída;
+- validações com Data Annotations e regras de negócio;
+- tratamento global de exceções;
+- respostas HTTP 400, 404, 409 e 500 conforme o tipo de erro;
+- controle do fluxo de aluguel e devolução;
+- cinco filtros diferentes;
+- consultas com INNER JOIN e LEFT JOIN;
+- Swagger;
+- workflow de build do .NET no GitHub Actions.
 
-São 6 entidades, uma a mais que o mínimo pedido no item 1.5:
+## Rotas CRUD
 
-| # | Entidade | Chave primária | Chaves estrangeiras |
-|---|---|---|---|
-| 1 | Fabricante | `FabricanteId` | - |
-| 2 | Categoria | `CategoriaId` | - |
-| 3 | Filial | `FilialId` | - |
-| 4 | Veiculo | `VeiculoId` | `FabricanteId`, `CategoriaId`, `FilialId` |
-| 5 | Cliente | `ClienteId` | - |
-| 6 | Aluguel | `AluguelId` | `ClienteId`, `VeiculoId`, `FilialId` |
+Cada entidade possui GET, GET por id, POST, PUT e DELETE.
 
-### Regras do enunciado atendidas
+| Entidade | Rota |
+|---|---|
+| Fabricante | /api/fabricantes |
+| Categoria | /api/categorias |
+| Filial | /api/filiais |
+| Veículo | /api/veiculos |
+| Cliente | /api/clientes |
+| Aluguel | /api/alugueis |
 
-- Todo veículo pertence a um fabricante (`FK_Veiculo_Fabricante`) e registra `Modelo`, `AnoFabricacao` e `Quilometragem`.
-- Cliente tem `Nome`, `Cpf` e `Email` obrigatórios, os três com índice único.
-- Aluguel amarra um cliente, um veículo e um período (`DataRetirada` / `DataDevolucaoPrevista`).
-- A devolução é registrada em `DataDevolucaoEfetiva`, junto com `QuilometragemInicial`, `QuilometragemFinal`, `ValorDiaria` e `ValorTotal`.
+A devolução de um veículo é registrada por:
 
-O detalhamento do modelo conceitual, com o diagrama ER, está em [`docs/modelo-conceitual.md`](docs/modelo-conceitual.md).
+POST /api/alugueis/{id}/devolucao
+
+Ao iniciar um aluguel, o veículo passa para Alugado. Na devolução, a quilometragem é atualizada, o valor total é calculado e o veículo volta para Disponivel.
+
+## Filtros e JOINs
+
+Foram implementadas exatamente cinco rotas de filtros:
+
+1. GET /api/filtros/veiculos-disponiveis  
+   INNER JOIN entre Veiculos, Fabricantes, Categorias e Filiais.
+
+2. GET /api/filtros/alugueis-por-cliente/{clienteId}  
+   INNER JOIN entre Alugueis, Clientes, Veiculos e Fabricantes.
+
+3. GET /api/filtros/alugueis-por-periodo?inicio=2026-01-01&fim=2026-12-31  
+   INNER JOIN entre Alugueis, Clientes, Veiculos e Filiais.
+
+4. GET /api/filtros/categorias-com-frota  
+   LEFT JOIN entre Categorias e Veiculos, incluindo categorias sem veículos.
+
+5. GET /api/filtros/clientes-sem-alugueis  
+   LEFT JOIN entre Clientes e Alugueis.
+
+## Entity Framework e SQL Server Express
+
+O projeto continua utilizando ApplicationContext com Entity Framework Core 8 e o provider do SQL Server.
+
+A connection string padrão aponta para:
+
+Server=localhost\SQLEXPRESS;Database=LocadoraVeiculos;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True
 
 ## Como rodar
 
-Pré-requisitos: .NET SDK 8.0 e SQL Server Express instalado (instância `SQLEXPRESS`).
+Pré-requisitos:
 
-1. Ajuste a connection string em `src/LocadoraVeiculos/appsettings.json` se a sua instância tiver outro nome.
+- .NET SDK 8;
+- SQL Server Express;
+- dotnet-ef.
 
-2. Instale a ferramenta do EF, caso ainda não tenha:
+Comandos:
 
-```bash
-dotnet tool install --global dotnet-ef
-```
+    dotnet restore
+    dotnet ef migrations add Inicial --project src/LocadoraVeiculos
+    dotnet ef database update --project src/LocadoraVeiculos
+    dotnet run --project src/LocadoraVeiculos
 
-3. Restaure os pacotes e gere o banco:
+Caso o banco da Etapa 1 já tenha sido criado pelo script docs/modelo-fisico.sql, não é necessário recriá-lo.
 
-```bash
-dotnet restore
-dotnet ef migrations add InicialEtapa1 --project src/LocadoraVeiculos
-dotnet ef database update --project src/LocadoraVeiculos
-```
+Swagger:
 
-4. Suba a aplicação:
+https://localhost:7147/swagger
 
-```bash
-dotnet run --project src/LocadoraVeiculos
-```
+Verificação da aplicação e da conexão:
 
-O Swagger fica em `https://localhost:7147/swagger` e o endpoint `/status` confirma se a conexão com o banco está funcionando.
-
-> Se preferir criar o banco direto pelo SSMS, sem migration, o script está em `docs/modelo-fisico.sql`.
+GET /status
 
 ## Tecnologias
 
 - .NET 8 / C# 12
-- Entity Framework Core 8 (SQL Server provider)
+- ASP.NET Core Web API
+- Entity Framework Core 8
 - SQL Server Express
-- Swashbuckle (Swagger)
+- Swashbuckle / Swagger
 
-## Próximas etapas
+## Etapas
 
-- Etapa 2: criação de registros e consultas
-- Etapa 3: implementação dos endpoints REST e testes no Swagger
-- Etapa 4: vídeo de apresentação
+- Etapa 1: modelagem do banco de dados - concluída
+- Etapa 2: implementação do backend - concluída

@@ -1,13 +1,41 @@
+using System.Text.Json.Serialization;
 using LocadoraVeiculos.Data;
+using LocadoraVeiculos.Middleware;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Registro do contexto do EF Core apontando para o SQL Server Express
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("LocadoraConnection")));
 
-builder.Services.AddControllers();
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var detalhes = context.ModelState
+            .Where(item => item.Value?.Errors.Count > 0)
+            .ToDictionary(
+                item => item.Key,
+                item => item.Value!.Errors
+                    .Select(erro => string.IsNullOrWhiteSpace(erro.ErrorMessage)
+                        ? "Valor inválido."
+                        : erro.ErrorMessage)
+                    .ToArray());
+
+        return new BadRequestObjectResult(new
+        {
+            erro = "Dados de entrada inválidos.",
+            detalhes
+        });
+    };
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -15,7 +43,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "Locadora de Veículos API",
         Version = "v1",
-        Description = "Trabalho Prático 1 - Etapa 1 (modelagem do banco de dados com Entity Framework Core)."
+        Description = "Trabalho Prático - Etapa 2: backend REST, CRUD, validações, tratamento de erros e filtros com JOINs."
     });
 });
 
@@ -27,17 +55,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 app.MapControllers();
 
-// Endpoint simples só para confirmar que a aplicação e a conexão estão de pé.
 app.MapGet("/status", async (ApplicationContext contexto) =>
 {
     var conectado = await contexto.Database.CanConnectAsync();
     return Results.Ok(new
     {
         aplicacao = "Locadora de Veículos",
-        etapa = "1 - Modelagem do banco de dados",
+        etapa = "2 - Implementação do Backend",
         bancoConectado = conectado
     });
 });
