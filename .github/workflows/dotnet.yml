@@ -27,3 +27,14 @@ jobs:
 
       - name: Build
         run: dotnet build LocadoraVeiculos.sln --configuration Release --no-restore
+
+      - name: Package source
+        run: |
+          zip -qr locadora-veiculos-etapa2.zip . -x '.git/*' 'src/LocadoraVeiculos/bin/*' 'src/LocadoraVeiculos/obj/*'
+
+      - name: Upload source package
+        uses: actions/upload-artifact@v4
+        with:
+          name: locadora-veiculos-etapa2
+          path: locadora-veiculos-etapa2.zip
+          if-no-files-found: error
