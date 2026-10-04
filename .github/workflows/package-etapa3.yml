@@ -1,0 +1,24 @@
+name: Package Etapa 3
+
+on:
+  push:
+    branches:
+      - feature/package-etapa3
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Criar ZIP da entrega
+        run: |
+          zip -qr locadora-veiculos-etapa3.zip .             -x '.git/*'                '.github/workflows/package-etapa3.yml'                '*/bin/*'                '*/obj/*'                'TestResults/*'
+
+      - name: Upload ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: locadora-veiculos-etapa3
+          path: locadora-veiculos-etapa3.zip
+          if-no-files-found: error
