@@ -1,4 +1,4 @@
-name: Build .NET
+name: Build e Testes .NET
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
       - main
 
 jobs:
-  build:
+  build-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,3 +27,19 @@ jobs:
 
       - name: Build
         run: dotnet build LocadoraVeiculos.sln --configuration Release --no-restore
+
+      - name: Testes automatizados
+        run: >
+          dotnet test LocadoraVeiculos.sln
+          --configuration Release
+          --no-build
+          --logger "trx;LogFileName=etapa3.trx"
+          --results-directory TestResults
+
+      - name: Evidências dos testes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidencias-testes-etapa3
+          path: TestResults/**
+          if-no-files-found: warn
