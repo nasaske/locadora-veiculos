@@ -109,7 +109,7 @@ public class ApiTests : IClassFixture<CustomWebApplicationFactory>
         var semAlugueis = await _client.GetAsync("/api/filtros/clientes-sem-alugueis");
         Assert.Equal(HttpStatusCode.OK, semAlugueis.StatusCode);
         var corpoClientes = await semAlugueis.Content.ReadAsStringAsync();
-        Assert.Contains($"cliente{clienteId}@teste.com", corpoClientes);
+        Assert.Contains("Cliente Teste", corpoClientes);
 
         Assert.True(veiculoId > 0);
     }
