@@ -1,6 +1,8 @@
+using System.Reflection;
 using System.Text.Json.Serialization;
 using LocadoraVeiculos.Data;
 using LocadoraVeiculos.Middleware;
+using LocadoraVeiculos.Swagger;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,23 +39,40 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(options =>
 {
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
     {
         Title = "Locadora de Veículos API",
         Version = "v1",
-        Description = "Trabalho Prático - Etapa 2: backend REST, CRUD, validações, tratamento de erros e filtros com JOINs."
+        Description = "API REST do Trabalho Prático. Possui CRUD completo, regras de aluguel, filtros com INNER/LEFT JOIN, validação e tratamento de erros.",
+        Contact = new Microsoft.OpenApi.Models.OpenApiContact
+        {
+            Name = "Davi Oliveira Parma"
+        }
     });
+
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+        options.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+
+    options.OperationFilter<ApiDocumentationOperationFilter>();
 });
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+// Na Etapa 3 o Swagger fica disponível em qualquer ambiente da aplicação,
+// facilitando a avaliação e a documentação das rotas.
+app.UseSwagger();
+app.UseSwaggerUI(options =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Locadora de Veículos API v1");
+    options.RoutePrefix = "swagger";
+    options.DocumentTitle = "Locadora de Veículos - Swagger";
+    options.DisplayRequestDuration();
+    options.EnableDeepLinking();
+});
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
@@ -65,9 +84,14 @@ app.MapGet("/status", async (ApplicationContext contexto) =>
     return Results.Ok(new
     {
         aplicacao = "Locadora de Veículos",
-        etapa = "2 - Implementação do Backend",
+        etapa = "3 - Swagger, documentação e testes",
         bancoConectado = conectado
     });
-});
+})
+.WithName("StatusAplicacao")
+.WithSummary("Verifica o status da aplicação e da conexão com o banco.")
+.WithDescription("Retorna o nome da aplicação, a etapa atual e se o SQL Server está acessível.");
 
 app.Run();
+
+public partial class Program { }
