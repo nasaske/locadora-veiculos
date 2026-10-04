@@ -34,3 +34,19 @@ evidencias-testes-etapa3
 ```
 
 Assim, além do código dos testes, cada execução do GitHub Actions mantém uma evidência objetiva do resultado.
+
+
+## Execução verificada
+
+Execução validada no GitHub Actions em 04/10/2026:
+
+- Workflow run: `37235321530`
+- Commit testado: `b40f1eff270a04d8e50e4fd0e4e9251e4a8465b1`
+- Build: **sucesso**
+- Testes: **6 aprovados, 0 falhos, 0 ignorados**
+- Arquivo de resultado: `TestResults/etapa3.trx`
+- Artifact: `evidencias-testes-etapa3` (ID `11315287739`)
+
+Link da execução:
+
+https://github.com/nasaske/locadora-veiculos/actions/runs/37235321530
