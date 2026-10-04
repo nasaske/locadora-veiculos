@@ -10,10 +10,11 @@ public sealed class ApiDocumentationOperationFilter : IOperationFilter
 {
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        var controller = context.ApiDescription.ActionDescriptor.RouteValues
-            .GetValueOrDefault("controller") ?? string.Empty;
-        var action = context.ApiDescription.ActionDescriptor.RouteValues
-            .GetValueOrDefault("action") ?? string.Empty;
+        context.ApiDescription.ActionDescriptor.RouteValues.TryGetValue("controller", out var controllerValue);
+        context.ApiDescription.ActionDescriptor.RouteValues.TryGetValue("action", out var actionValue);
+
+        var controller = controllerValue ?? string.Empty;
+        var action = actionValue ?? string.Empty;
 
         if (string.IsNullOrWhiteSpace(controller))
             return;
