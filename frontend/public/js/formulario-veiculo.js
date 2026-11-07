@@ -144,7 +144,9 @@ export function criarFormularioVeiculo(form) {
   // Sugere a diária base da categoria quando o valor ainda não foi preenchido.
   campo('categoriaId').addEventListener('change', () => {
     const categoria = categorias.find((c) => String(c.categoriaId) === campo('categoriaId').value);
-    if (categoria && !campo('valorDiaria').value) campo('valorDiaria').value = categoria.valorDiariaBase;
+    if (categoria && !campo('valorDiaria').value) {
+      campo('valorDiaria').value = Number(categoria.valorDiariaBase).toFixed(2);
+    }
   });
 
   function atualizarPrevia() {
@@ -205,7 +207,7 @@ export function criarFormularioVeiculo(form) {
       cor: veiculo.cor ?? '',
       quilometragem: veiculo.quilometragem,
       combustivel: veiculo.combustivel,
-      valorDiaria: veiculo.valorDiaria,
+      valorDiaria: Number(veiculo.valorDiaria).toFixed(2),
       dataAquisicao: String(veiculo.dataAquisicao ?? '').slice(0, 10),
       imagemUrl: veiculo.imagemUrl ?? '',
     };

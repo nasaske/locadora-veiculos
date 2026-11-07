@@ -1,0 +1,4 @@
+.gcloudignore
+bin/
+obj/
+*.user
