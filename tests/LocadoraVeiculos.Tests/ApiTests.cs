@@ -157,6 +157,95 @@ public class ApiTests : IClassFixture<CustomWebApplicationFactory>
     }
 
     [Fact]
+    public async Task Veiculos_recentes_deve_retornar_os_ultimos_12_do_mais_novo_para_o_mais_antigo()
+    {
+        var ids = new List<int>();
+        for (var i = 1; i <= 13; i++)
+            ids.Add(await CriarVeiculo($"REC{i:D4}", $"9BWRECENTE{i:D7}", $"Modelo {i:D2}"));
+
+        var response = await _client.GetAsync("/api/veiculos/recentes");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        var idsRetornados = json.RootElement.EnumerateArray()
+            .Select(v => v.GetProperty("veiculoId").GetInt32())
+            .ToList();
+
+        Assert.Equal(12, idsRetornados.Count);
+        Assert.Equal(ids.AsEnumerable().Reverse().Take(12), idsRetornados);
+        Assert.DoesNotContain(ids[0], idsRetornados);
+
+        var tres = JsonDocument.Parse(await _client.GetStringAsync("/api/veiculos/recentes?quantidade=3"));
+        Assert.Equal(3, tres.RootElement.GetArrayLength());
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(51)]
+    public async Task Veiculos_recentes_deve_rejeitar_quantidade_fora_do_limite(int quantidade)
+    {
+        var response = await _client.GetAsync($"/api/veiculos/recentes?quantidade={quantidade}");
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Veiculo_deve_gravar_e_atualizar_a_url_da_imagem()
+    {
+        const string imagem = "https://exemplo.com/fotos/argo.jpg";
+        var id = await CriarVeiculo(imagemUrl: imagem);
+
+        var detalhe = JsonDocument.Parse(await _client.GetStringAsync($"/api/veiculos/{id}"));
+        Assert.Equal(imagem, detalhe.RootElement.GetProperty("imagemUrl").GetString());
+
+        var update = await _client.PutAsJsonAsync($"/api/veiculos/{id}", NovoVeiculo(
+            "TST1A23", "9BWZZZ377VT004251", "Argo Editado", "https://exemplo.com/fotos/argo-2.jpg"));
+        Assert.Equal(HttpStatusCode.OK, update.StatusCode);
+
+        var atualizado = JsonDocument.Parse(await update.Content.ReadAsStringAsync());
+        Assert.Equal("Argo Editado", atualizado.RootElement.GetProperty("modelo").GetString());
+        Assert.Equal("https://exemplo.com/fotos/argo-2.jpg", atualizado.RootElement.GetProperty("imagemUrl").GetString());
+    }
+
+    [Theory]
+    [InlineData("javascript:alert(1)")]
+    [InlineData("ftp://exemplo.com/foto.jpg")]
+    [InlineData("foto-sem-endereco.jpg")]
+    public async Task Veiculo_deve_rejeitar_imagem_que_nao_seja_url_http(string imagemUrl)
+    {
+        var response = await _client.PostAsJsonAsync("/api/veiculos",
+            NovoVeiculo("IMG1A23", "9BWIMAGEMINVALIDA", "Imagem Inválida", imagemUrl));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Contains("http", await response.Content.ReadAsStringAsync());
+    }
+
+    [Fact]
+    public async Task Cors_deve_liberar_o_frontend_para_alterar_veiculos()
+    {
+        using var preflight = new HttpRequestMessage(HttpMethod.Options, "/api/veiculos/1");
+        preflight.Headers.Add("Origin", "http://localhost:3000");
+        preflight.Headers.Add("Access-Control-Request-Method", "PUT");
+        preflight.Headers.Add("Access-Control-Request-Headers", "content-type");
+
+        var response = await _client.SendAsync(preflight);
+
+        Assert.True(response.IsSuccessStatusCode);
+        Assert.Equal("http://localhost:3000",
+            response.Headers.GetValues("Access-Control-Allow-Origin").Single());
+    }
+
+    [Fact]
+    public async Task Cors_nao_deve_liberar_origem_desconhecida()
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/veiculos");
+        request.Headers.Add("Origin", "http://site-desconhecido.com");
+
+        var response = await _client.SendAsync(request);
+
+        Assert.False(response.Headers.Contains("Access-Control-Allow-Origin"));
+    }
+
+    [Fact]
     public async Task Recurso_inexistente_deve_retornar_not_found()
     {
         var response = await _client.GetAsync("/api/clientes/999999");
@@ -186,28 +275,35 @@ public class ApiTests : IClassFixture<CustomWebApplicationFactory>
         return json.RootElement.GetProperty("clienteId").GetInt32();
     }
 
-    private async Task<int> CriarVeiculo()
+    private async Task<int> CriarVeiculo(
+        string placa = "TST1A23",
+        string chassi = "9BWZZZ377VT004251",
+        string modelo = "Argo Teste",
+        string? imagemUrl = null)
     {
-        var response = await _client.PostAsJsonAsync("/api/veiculos", new
-        {
-            placa = "TST1A23",
-            chassi = "9BWZZZ377VT004251",
-            modelo = "Argo Teste",
-            anoFabricacao = 2025,
-            anoModelo = 2026,
-            cor = "Prata",
-            quilometragem = 1000,
-            combustivel = "Flex",
-            status = "Disponivel",
-            valorDiaria = 150.00m,
-            dataAquisicao = new DateTime(2025, 1, 15),
-            fabricanteId = 1,
-            categoriaId = 1,
-            filialId = 1
-        });
+        var response = await _client.PostAsJsonAsync("/api/veiculos", NovoVeiculo(placa, chassi, modelo, imagemUrl));
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         var json = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
         return json.RootElement.GetProperty("veiculoId").GetInt32();
     }
+
+    private static object NovoVeiculo(string placa, string chassi, string modelo, string? imagemUrl) => new
+    {
+        placa,
+        chassi,
+        modelo,
+        anoFabricacao = 2025,
+        anoModelo = 2026,
+        cor = "Prata",
+        quilometragem = 1000,
+        combustivel = "Flex",
+        status = "Disponivel",
+        valorDiaria = 150.00m,
+        dataAquisicao = new DateTime(2025, 1, 15),
+        imagemUrl,
+        fabricanteId = 1,
+        categoriaId = 1,
+        filialId = 1
+    };
 }

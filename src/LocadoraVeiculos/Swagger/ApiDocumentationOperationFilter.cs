@@ -42,6 +42,8 @@ public sealed class ApiDocumentationOperationFilter : IOperationFilter
         {
             "GetAll" => ($"Lista {recurso}", $"Retorna todos os registros de {recurso} cadastrados no sistema."),
             "GetById" => ($"Busca {recurso} por id", $"Retorna um registro específico de {recurso} pelo identificador."),
+            "GetRecentes" => ($"Lista os últimos {recurso} cadastrados",
+                $"Retorna os {recurso} mais recentes (padrão: 12), do mais novo para o mais antigo. Usado pela vitrine do front-end."),
             "Create" => ($"Cria {recurso}", $"Valida os dados recebidos e cria um novo registro de {recurso}."),
             "Update" => ($"Atualiza {recurso}", $"Atualiza um registro existente de {recurso}, respeitando as regras de negócio."),
             "Delete" => ($"Exclui {recurso}", $"Exclui um registro de {recurso} quando não houver vínculos que impeçam a operação."),

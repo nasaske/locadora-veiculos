@@ -1,0 +1,16 @@
+{
+  "name": "locadora-veiculos-frontend",
+  "version": "1.0.0",
+  "description": "Front-end (home + detalhes) da Locadora de Veículos que consome a API C# via fetch.",
+  "private": true,
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "author": "Davi Oliveira Parma",
+  "license": "UNLICENSED"
+}
