@@ -3,7 +3,7 @@
 // - Versão online (Vercel): API publicada no Render, em modo demonstração.
 // Também pode ser trocado sem editar este arquivo: API_URL=http://... npm start
 const API_LOCAL = 'http://localhost:5147';
-const API_ONLINE = 'https://locadora-veiculos-api.onrender.com';
+const API_ONLINE = 'https://locadora-veiculos-api-ni7l.onrender.com';
 
 const rodandoLocal = ['localhost', '127.0.0.1', '[::1]'].includes(window.location.hostname);
 

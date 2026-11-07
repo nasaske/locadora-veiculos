@@ -13,6 +13,16 @@ Front-end web com duas páginas (home e detalhes) que consome a API de veículos
 **somente com `fetch`**. As páginas usam Bootstrap 5 (CSS + JavaScript) com estilos próprios
 e são servidas por um servidor Node.js sem dependências (`frontend/server.js`).
 
+### Versão online
+
+- **Front-end (Vercel):** https://locadora-veiculos-two.vercel.app
+- **API (Render, Swagger):** https://locadora-veiculos-api-ni7l.onrender.com/swagger
+
+A API online roda no modo demonstração (banco em memória com a frota de exemplo). No plano gratuito do
+Render ela hiberna depois de 15 minutos sem acesso: o primeiro carregamento pode levar cerca de 1 minuto e
+os cadastros voltam à frota de exemplo. A Vercel publica a pasta `frontend/public` (ver `vercel.json`) e o
+Render usa `src/LocadoraVeiculos/Dockerfile`, ambos a partir da `main`.
+
 ### Critérios da rubrica
 
 | Critério | Onde está |
