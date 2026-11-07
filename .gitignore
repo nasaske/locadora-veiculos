@@ -25,3 +25,6 @@
 *.cache
 *.dll.config
 TestResults/
+
+## Vercel
+.vercel/
