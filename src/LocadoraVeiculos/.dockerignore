@@ -1,0 +1,6 @@
+bin/
+obj/
+*.user
+Dockerfile
+.dockerignore
+.gcloudignore
