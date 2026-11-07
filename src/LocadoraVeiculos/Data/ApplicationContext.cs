@@ -158,6 +158,7 @@ public class ApplicationContext : DbContext
 
             entidade.Property(v => v.ValorDiaria).HasPrecision(10, 2);
             entidade.Property(v => v.DataAquisicao).HasColumnType("date");
+            entidade.Property(v => v.ImagemUrl).HasColumnType("varchar(500)");
 
             entidade.HasIndex(v => v.Placa)
                     .IsUnique()

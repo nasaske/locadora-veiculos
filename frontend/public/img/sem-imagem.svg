@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Veículo sem imagem">
+  <rect width="400" height="300" fill="#e9edf3"/>
+  <circle cx="150" cy="105" r="26" fill="#c5ccd6"/>
+  <path d="M60 240 L160 140 L220 200 L265 160 L340 240 Z" fill="#c5ccd6"/>
+  <text x="200" y="278" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#8a94a3">Sem imagem</text>
+</svg>

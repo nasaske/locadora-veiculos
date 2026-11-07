@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Detalhes de um veículo da Locadora, com edição e exclusão.">
+  <title>Locadora de Veículos | Detalhes</title>
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        integrity="sha384-XGjxtQfXaH2tnPFa9x+ruJTuLE3Aa6LhHSWRr1XeTyhezb4abCG4ccI5AkVDxqC+" crossorigin="anonymous">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <!-- Cabeçalho: logotipo + 3 links (wireframe) -->
+  <nav class="navbar navbar-expand-md bg-white border-bottom sticky-top">
+    <div class="container">
+      <a class="navbar-brand logotipo" href="index.html">
+        <i class="bi bi-car-front-fill"></i> Locadora<span>Veículos</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu-principal"
+              aria-controls="menu-principal" aria-expanded="false" aria-label="Abrir menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="menu-principal">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Início</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html#frota">Frota</a></li>
+          <li class="nav-item"><a class="nav-link" href="#creditos">Créditos</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-4">
+    <nav aria-label="Caminho da página">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="index.html">Início</a></li>
+        <li class="breadcrumb-item active" aria-current="page" id="trilha-modelo">Detalhes do veículo</li>
+      </ol>
+    </nav>
+    <hr class="mt-0">
+
+    <!-- Conteúdo preenchido via fetch (GET /api/veiculos/{id}) -->
+    <section id="detalhe-veiculo" aria-live="polite">
+      <div class="row g-4 placeholder-glow" aria-hidden="true">
+        <div class="col-lg-5"><div class="placeholder w-100 rounded-3 detalhe-placeholder"></div></div>
+        <div class="col-lg-7">
+          <span class="placeholder col-3 mb-3"></span>
+          <span class="placeholder col-8 placeholder-lg mb-3"></span>
+          <span class="placeholder col-12 mb-2"></span>
+          <span class="placeholder col-10 mb-2"></span>
+          <span class="placeholder col-11"></span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Créditos -->
+  <footer id="creditos" class="rodape">
+    <div class="container">
+      <h2 class="titulo-secao h5">Créditos</h2>
+      <div class="row g-4">
+        <div class="col-md-7">
+          <h3 class="rotulo">Sobre</h3>
+          <p class="mb-2">
+            Front-end da <strong>Locadora de Veículos</strong>, feito para a atividade
+            "Linkando API com Node.js e Bootstrap". As páginas são servidas por Node.js e consomem a API REST em
+            C#/ASP.NET Core (Entity Framework Core + SQL Server) usando somente <code>fetch</code>.
+          </p>
+          <p class="small text-body-secondary mb-0">Fotos dos veículos de exemplo: Wikimedia Commons (licenças livres).</p>
+        </div>
+        <div class="col-md-5">
+          <h3 class="rotulo">Autoria</h3>
+          <div class="d-flex gap-3 align-items-start">
+            <i class="bi bi-person-circle autor-icone" aria-hidden="true"></i>
+            <ul class="list-unstyled small mb-0">
+              <li><strong>Aluno:</strong> Davi Oliveira Parma</li>
+              <li><strong>Curso:</strong> Análise e Desenvolvimento de Software</li>
+              <li><strong>Código de pessoa:</strong> 1597232</li>
+            </ul>
+          </div>
+          <p class="mt-3 mb-0 redes">
+            <span class="rotulo me-2">Redes sociais:</span>
+            <a href="https://github.com/nasaske" target="_blank" rel="noopener" aria-label="GitHub"><i class="bi bi-github"></i></a>
+            <a href="https://github.com/nasaske/locadora-veiculos" target="_blank" rel="noopener" aria-label="Repositório do projeto"><i class="bi bi-code-slash"></i></a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal: editar veículo -->
+  <div class="modal fade" id="modal-editar-veiculo" tabindex="-1" aria-labelledby="titulo-modal-editar" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <form class="modal-content" id="form-editar-veiculo">
+        <div class="modal-header">
+          <h2 class="modal-title h5" id="titulo-modal-editar"><i class="bi bi-pencil-square me-2"></i>Editar veículo</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body" data-campos-veiculo></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Salvar alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: confirmar exclusão -->
+  <div class="modal fade" id="modal-excluir-veiculo" tabindex="-1" aria-labelledby="titulo-modal-excluir" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title h5 text-danger" id="titulo-modal-excluir">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar exclusão
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-2">Tem certeza que deseja excluir o veículo <strong id="excluir-nome"></strong>?</p>
+          <p class="small text-body-secondary mb-0">Esta ação não pode ser desfeita.</p>
+          <div class="alert alert-danger d-none mt-3 mb-0" role="alert" id="erro-exclusao"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger" id="confirmar-exclusao">
+            <i class="bi bi-trash3 me-1"></i>Sim, excluir
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script type="module" src="js/detalhes.js"></script>
+</body>
+</html>

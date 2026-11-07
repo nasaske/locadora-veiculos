@@ -47,6 +47,7 @@ A API é documentada e testável pelo Swagger UI em `/swagger`. O documento Open
 | Método | Rota | Finalidade |
 |---|---|---|
 | GET | /api/veiculos | Lista veículos com fabricante, categoria e filial |
+| GET | /api/veiculos/recentes?quantidade=12 | Últimos veículos cadastrados (vitrine do front-end) |
 | GET | /api/veiculos/{id} | Busca veículo por id |
 | POST | /api/veiculos | Cria veículo |
 | PUT | /api/veiculos/{id} | Atualiza veículo |

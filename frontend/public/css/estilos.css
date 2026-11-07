@@ -1,0 +1,188 @@
+/* Estilos próprios da Locadora de Veículos (complementam o Bootstrap 5). */
+
+:root {
+  --cor-marca: #0b5ed7;
+  --cor-marca-escura: #0a2540;
+  --cor-fundo: #f4f6fa;
+  --cor-borda: #dfe3ea;
+  --cor-preco: #0a7d3b;
+}
+
+body {
+  background-color: var(--cor-fundo);
+  color: #1f2933;
+}
+
+/* ---------- Cabeçalho ---------- */
+.logotipo {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--cor-marca-escura);
+}
+
+.logotipo i {
+  color: var(--cor-marca);
+}
+
+.logotipo span {
+  color: var(--cor-marca);
+  margin-left: 0.15rem;
+}
+
+.navbar .nav-link {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- Títulos de seção (linha abaixo, como no wireframe) ---------- */
+.titulo-secao {
+  font-size: 1.15rem;
+  font-weight: 700;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 2px solid var(--cor-marca-escura);
+}
+
+h1.titulo-secao,
+.titulo-secao h2 {
+  font-weight: 700;
+}
+
+.rotulo {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--cor-marca);
+  margin-bottom: 0.35rem;
+}
+
+/* ---------- Destaque (carrossel) ---------- */
+.destaque-foto {
+  height: clamp(220px, 42vw, 420px);
+  object-fit: cover;
+}
+
+.destaque-placeholder {
+  height: clamp(220px, 42vw, 420px);
+}
+
+.destaque-legenda {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 3rem 8% 2.75rem;
+  background: linear-gradient(to top, rgba(10, 37, 64, 0.9), rgba(10, 37, 64, 0));
+}
+
+.destaque-vazio {
+  background: #e3ecfb;
+  color: #52606d;
+}
+
+/* ---------- Cards da vitrine ---------- */
+.card-veiculo {
+  border: 1px solid var(--cor-borda);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card-veiculo:hover,
+.card-veiculo:focus-within {
+  transform: translateY(-3px);
+  box-shadow: 0 0.6rem 1.4rem rgba(10, 37, 64, 0.12);
+}
+
+.card-foto {
+  background-color: #e9edf3;
+}
+
+.card-foto img,
+.detalhe-foto img {
+  width: 100%;
+  height: 100%;
+}
+
+.preco {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--cor-preco);
+}
+
+.preco small {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6c757d;
+}
+
+.preco-grande {
+  font-size: 1.75rem;
+}
+
+/* ---------- Detalhes ---------- */
+.detalhe-placeholder {
+  aspect-ratio: 4 / 3;
+}
+
+.detalhe-foto {
+  background-color: #e9edf3;
+}
+
+.ficha-tecnica {
+  background: #fff;
+  border: 1px solid var(--cor-borda);
+  border-radius: 0.75rem;
+  padding: 1rem 0.5rem 0.25rem;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.ficha-tecnica dt {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6c757d;
+}
+
+.ficha-tecnica dd {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Formulário ---------- */
+.previa-imagem {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background-color: #e9edf3;
+}
+
+/* ---------- Créditos (rodapé) ---------- */
+.rodape {
+  margin-top: 3rem;
+  padding: 2rem 0 2.5rem;
+  background: #fff;
+  border-top: 1px solid var(--cor-borda);
+}
+
+.autor-icone {
+  font-size: 2.5rem;
+  line-height: 1;
+  color: var(--cor-marca-escura);
+}
+
+.redes a {
+  font-size: 1.25rem;
+  color: var(--cor-marca-escura);
+  margin-right: 0.5rem;
+}
+
+.redes a:hover {
+  color: var(--cor-marca);
+}

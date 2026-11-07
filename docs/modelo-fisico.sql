@@ -69,6 +69,7 @@ CREATE TABLE Veiculos (
     Status         INT           NOT NULL DEFAULT 1,
     ValorDiaria    DECIMAL(10,2) NOT NULL,
     DataAquisicao  DATE          NOT NULL,
+    ImagemUrl      VARCHAR(500)  NULL,
     FabricanteId   INT           NOT NULL,
     CategoriaId    INT           NOT NULL,
     FilialId       INT           NOT NULL,

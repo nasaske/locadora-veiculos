@@ -11,6 +11,9 @@ namespace LocadoraVeiculos.Controllers;
 [Route("api/[controller]")]
 public class VeiculosController : ControllerBase
 {
+    private const int QuantidadePadraoRecentes = 12;
+    private const int QuantidadeMaximaRecentes = 50;
+
     private readonly ApplicationContext _context;
 
     public VeiculosController(ApplicationContext context)
@@ -25,6 +28,26 @@ public class VeiculosController : ControllerBase
             .AsNoTracking()
             .OrderBy(v => v.Modelo)
             .ThenBy(v => v.Placa)
+            .ToListAsync();
+
+        return Ok(veiculos.Select(v => v.ToResponse()));
+    }
+
+    /// <summary>
+    /// Lista os últimos veículos cadastrados (do mais novo para o mais antigo).
+    /// Usado pela página inicial do front-end para montar a vitrine.
+    /// </summary>
+    /// <param name="quantidade">Quantidade de veículos (1 a 50). Padrão: 12.</param>
+    [HttpGet("recentes")]
+    public async Task<ActionResult<IEnumerable<VeiculoResponseDto>>> GetRecentes([FromQuery] int quantidade = QuantidadePadraoRecentes)
+    {
+        if (quantidade < 1 || quantidade > QuantidadeMaximaRecentes)
+            return BadRequest(new { erro = $"A quantidade deve estar entre 1 e {QuantidadeMaximaRecentes}." });
+
+        var veiculos = await ConsultaCompleta()
+            .AsNoTracking()
+            .OrderByDescending(v => v.VeiculoId)
+            .Take(quantidade)
             .ToListAsync();
 
         return Ok(veiculos.Select(v => v.ToResponse()));
@@ -132,6 +155,9 @@ public class VeiculosController : ControllerBase
         if (dto.DataAquisicao == default || dto.DataAquisicao.Date > DateTime.Today)
             return BadRequest(new { erro = "A data de aquisição deve ser válida e não pode estar no futuro." });
 
+        if (!ImagemUrlValida(dto.ImagemUrl))
+            return BadRequest(new { erro = "A imagem deve ser uma URL completa iniciada por http:// ou https://." });
+
         var placa = dto.Placa.Trim().ToUpperInvariant();
         var chassi = dto.Chassi.Trim().ToUpperInvariant();
 
@@ -155,6 +181,19 @@ public class VeiculosController : ControllerBase
         return null;
     }
 
+    /// <summary>
+    /// A imagem é opcional, mas quando informada precisa ser uma URL http/https
+    /// (evita valores como "javascript:" chegando ao front-end).
+    /// </summary>
+    private static bool ImagemUrlValida(string? imagemUrl)
+    {
+        if (string.IsNullOrWhiteSpace(imagemUrl))
+            return true;
+
+        return Uri.TryCreate(imagemUrl.Trim(), UriKind.Absolute, out var uri) &&
+               (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+    }
+
     private static void AplicarDto(Veiculo veiculo, VeiculoUpsertDto dto)
     {
         veiculo.Placa = dto.Placa.Trim().ToUpperInvariant();
@@ -168,6 +207,7 @@ public class VeiculosController : ControllerBase
         veiculo.Status = dto.Status;
         veiculo.ValorDiaria = dto.ValorDiaria;
         veiculo.DataAquisicao = dto.DataAquisicao.Date;
+        veiculo.ImagemUrl = string.IsNullOrWhiteSpace(dto.ImagemUrl) ? null : dto.ImagemUrl.Trim();
         veiculo.FabricanteId = dto.FabricanteId;
         veiculo.CategoriaId = dto.CategoriaId;
         veiculo.FilialId = dto.FilialId;

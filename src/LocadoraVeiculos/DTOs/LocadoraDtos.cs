@@ -25,7 +25,7 @@ public class CategoriaUpsertDto
     [MaxLength(200)]
     public string? Descricao { get; set; }
 
-    [Range(typeof(decimal), "0.01", "99999999")]
+    [Range(typeof(decimal), "0.01", "99999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
     public decimal ValorDiariaBase { get; set; }
 }
 
@@ -77,10 +77,14 @@ public class VeiculoUpsertDto
 
     public StatusVeiculo Status { get; set; } = StatusVeiculo.Disponivel;
 
-    [Range(typeof(decimal), "0.01", "99999999")]
+    [Range(typeof(decimal), "0.01", "99999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
     public decimal ValorDiaria { get; set; }
 
     public DateTime DataAquisicao { get; set; }
+
+    /// <summary>URL absoluta (http ou https) da foto do veículo.</summary>
+    [MaxLength(500)]
+    public string? ImagemUrl { get; set; }
 
     [Range(1, int.MaxValue)]
     public int FabricanteId { get; set; }
@@ -157,7 +161,7 @@ public class DevolucaoAluguelDto
     [Range(0, int.MaxValue)]
     public int QuilometragemFinal { get; set; }
 
-    [Range(typeof(decimal), "0", "99999999")]
+    [Range(typeof(decimal), "0", "99999999", ParseLimitsInInvariantCulture = true, ConvertValueInInvariantCulture = true)]
     public decimal ValorMulta { get; set; }
 }
 
@@ -203,6 +207,7 @@ public class VeiculoResponseDto
     public StatusVeiculo Status { get; set; }
     public decimal ValorDiaria { get; set; }
     public DateTime DataAquisicao { get; set; }
+    public string? ImagemUrl { get; set; }
     public int FabricanteId { get; set; }
     public string Fabricante { get; set; } = string.Empty;
     public int CategoriaId { get; set; }

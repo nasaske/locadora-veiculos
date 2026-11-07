@@ -46,6 +46,10 @@ public class Veiculo
 
     public DateTime DataAquisicao { get; set; }
 
+    /// <summary>URL (http/https) da foto exibida no front-end.</summary>
+    [MaxLength(500)]
+    public string? ImagemUrl { get; set; }
+
     // Chaves estrangeiras
     public int FabricanteId { get; set; }
 

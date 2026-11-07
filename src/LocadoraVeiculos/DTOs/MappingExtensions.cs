@@ -46,6 +46,7 @@ public static class MappingExtensions
         Status = veiculo.Status,
         ValorDiaria = veiculo.ValorDiaria,
         DataAquisicao = veiculo.DataAquisicao,
+        ImagemUrl = veiculo.ImagemUrl,
         FabricanteId = veiculo.FabricanteId,
         Fabricante = veiculo.Fabricante?.Nome ?? string.Empty,
         CategoriaId = veiculo.CategoriaId,
